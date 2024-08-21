@@ -10,8 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
+    "env": "^0.0.2",
     "express": "^4.19.2",
-    "mongoose": "^8.5.3"
+    "express-session": "^1.18.0",
+    "joi": "^17.13.3",
+    "mongoose": "^8.5.3",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
