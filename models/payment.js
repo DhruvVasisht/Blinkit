@@ -7,7 +7,7 @@ const paymentSchema=mongoose.Schema({
     amount: Number,
     method: String,
     status: String,
-    transaction: String
+    transaction: String,
 }); 
 
 module.exports = mongoose.model("payment",paymentSchema);
