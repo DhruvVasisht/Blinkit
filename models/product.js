@@ -21,15 +21,14 @@ const productSchema = mongoose.Schema({
         maxlength: 50
     },
     stock: {
-        type: Boolean,
+        type: Number,
         required: true,
-        default: true
     },
     description: {
         type: String,
     },
     image: {
-        type: String,
+        type: Buffer,
     }
 }, { timestamps: true });
 
@@ -39,7 +38,7 @@ const validateProduct = (productData) => {
         name: Joi.string().min(3).max(100).required(), // Product name
         price: Joi.number().min(0).required(), // Product price must be 0 or higher
         category: Joi.string().min(3).max(50).required(), // Product category
-        stock: Joi.boolean().required(), // Stock status
+        stock: Joi.number().required(), // Stock status
         description: Joi.string().optional(), // Optional description
         image: Joi.string().optional() // Image URL validation
     });
