@@ -33,8 +33,8 @@
                             <% products[key].forEach(function(elem){ %>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                                     <div class="bg-gray-50 p-4 rounded-lg shadow">
-                                        <img class="w-32 h-32 mb-3"
-                                            src="data:image/png;base64, <%= elem.image.toString('base64') %>" alt="">
+                                        <img class="w-32 h-32 mb-3" src="data:image/png;base64,<%= elem.image %>" alt="">
+
                                         <h3 class="text-lg font-medium text-gray-900">
                                             <%= elem.name %>
                                         </h3>

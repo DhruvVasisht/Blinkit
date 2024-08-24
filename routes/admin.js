@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { adminModel} = require('../models/admin');
 const validateAdmin = require('../middlewares/admin');
 const { productModel } = require('../models/product');
+const { categoryModel } = require('../models/category');
 require("dotenv").config();
 
 if (
@@ -53,8 +54,10 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.get("/dashboard", validateAdmin, (req, res) => {
-    res.render("admin_dashboard");
+router.get("/dashboard", validateAdmin,async (req, res) => {
+ let prodcount= await productModel.countDocuments()
+ let categcount= await categoryModel.countDocuments()
+ res.render("admin_dashboard",{prodcount,categcount});
 });
 
 router.get("/products", validateAdmin, async (req, res) => {

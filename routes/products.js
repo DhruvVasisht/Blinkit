@@ -8,7 +8,7 @@ const validateAdmin= require('../middlewares/admin');
 router.get("/", async (req, res) => {
     try {
         let prods = await productModel.find();
-        res.send(prods);
+        res.render("index")
     } catch (error) {
         res.status(500).send("Error fetching products: " + error.message);
     }
@@ -16,10 +16,23 @@ router.get("/", async (req, res) => {
 
 router.get("/delete/:id",validateAdmin,async (req, res) => {
     try {
+        if(req.user.admin){
         let prods = await productModel.findOneAndDelete({_id: req.params.id});
-        res.redirect("");
+        return res.redirect("/admin/products");
+    }
     } catch (error) {
-        res.status(500).send("Error fetching products: " + error.message);
+        res.send("You Are Not Allowed To Delete Product")
+    }
+});
+
+router.post("/delete",validateAdmin,async (req, res) => {
+    try {
+        if(req.user.admin){
+        let prods = await productModel.findOneAndDelete({_id: req.body.product_id});
+        return res.redirect("back");
+    }
+    } catch (error) {
+        res.send("You Are Not Allowed To Delete Product")
     }
 });
 
