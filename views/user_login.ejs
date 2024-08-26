@@ -1,20 +1,19 @@
 <%- include('./partials/header'); %>
 
-    <body class="h-screen w-screen flex items-center justify-center bg-gray-100">
+<body class="h-screen w-screen flex items-center justify-center bg-gray-100">
+    <div class="relative h-full w-full">
+        <!-- Full-screen Image -->
+        <img src="/images/Blinkit.png" alt="Background Image" 
+             class="object-cover w-full h-full md:h-auto md:w-full lg:h-full lg:w-full sm:h-auto sm:w-full">
 
-        <div class="relative h-full w-full">
-            <!-- Full-screen Image -->
-            <img src="/images/Blinkit.png" alt="Background Image" class="object-cover w-full h-full">
-
-            <!-- Button at the Bottom -->
-            <div class="absolute bottom-0 w-full flex justify-center mb-8">
-                <a href="/auth/google"
-                    class="bg-black text-white font-semibold py-3 px-6 rounded-lg hover:bg-black transition duration-300">
-                    Continue with Google
-                </a>
-            </div>
+        <!-- Button at the Bottom -->
+        <div class="absolute bottom-0 w-full flex justify-center mb-4 md:mb-6 lg:mb-8 sm:mb-4">
+            <a href="/auth/google"
+               class="bg-black text-white font-semibold py-2 px-4 md:py-3 md:px-6 lg:py-4 lg:px-8 sm:py-2 sm:px-4 rounded-lg hover:bg-black transition duration-300">
+                Continue with Google
+            </a>
         </div>
+    </div>
+</body>
 
-    </body>
-
-    <%- include('./partials/footer'); %>
+<%- include('./partials/footer'); %>

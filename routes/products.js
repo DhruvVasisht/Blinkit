@@ -1,77 +1,52 @@
 const express = require('express');
 const router = express.Router();
 const { productModel, validateProduct } = require('../models/product');
-const { categoryModel, validateCategory } = require('../models/category');
-const upload = require('../config/multer-config');  
-const validateAdmin= require('../middlewares/admin');
+const { categoryModel } = require('../models/category');
+const { cartModel } = require('../models/cart');
+const upload = require('../config/multer-config');
+const { validateAdmin, userIsLoggedIn } = require('../middlewares/admin');
 
-router.get("/", async (req, res) => {
+router.get("/", userIsLoggedIn, async (req, res) => {
+    let somethingInCart = false;
     try {
-        let prods = await productModel.find();
-        res.render("index")
+        const resultArray = await productModel.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    products: { $push: "$$ROOT" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    category: "$_id",
+                    products: { $slice: ["$products", 10] }
+                }
+            }
+        ]);
+
+        let cart = await cartModel.findOne({ user: req.session.passport.user }).populate("products");
+        if (cart && cart.products && cart.products.length > 0) somethingInCart = true;
+
+        let rnproducts = await productModel.aggregate([{ $sample: { size: 4 } }]);
+
+        rnproducts = rnproducts.map(product => ({
+            ...product,
+            imageType: product.image ? 'image/jpeg' : '' // Adjust this based on actual image type
+        }));
+
+        const resultObject = resultArray.reduce((acc, item) => {
+            acc[item.category] = item.products.map(product => ({
+                ...product,
+                imageType: product.image ? 'image/jpeg' : '' // Adjust this based on actual image type
+            }));
+            return acc;
+        }, {});
+
+        res.render("index", { products: resultObject, rnproducts, somethingInCart, cartCount: cart ? cart.products.length : 0 });
     } catch (error) {
         res.status(500).send("Error fetching products: " + error.message);
     }
-});
-
-router.get("/delete/:id",validateAdmin,async (req, res) => {
-    try {
-        if(req.user.admin){
-        let prods = await productModel.findOneAndDelete({_id: req.params.id});
-        return res.redirect("/admin/products");
-    }
-    } catch (error) {
-        res.send("You Are Not Allowed To Delete Product")
-    }
-});
-
-router.post("/delete",validateAdmin,async (req, res) => {
-    try {
-        if(req.user.admin){
-        let prods = await productModel.findOneAndDelete({_id: req.body.product_id});
-        return res.redirect("back");
-    }
-    } catch (error) {
-        res.send("You Are Not Allowed To Delete Product")
-    }
-});
-
-
-router.post("/", upload.single("image"), async (req, res) => {
-    let { name, price, category, stock, description } = req.body;
-    
-    // Convert the image buffer to a base64 string if the image exists
-    let image = req.file ? req.file.buffer.toString('base64') : null; 
-    
-    // Validate the product including the image
-    let { error } = validateProduct({ 
-        name,
-        price,
-        category,
-        stock,
-        description,
-        image 
-    });
-
-    if (error) return res.status(400).send(error.message);
-     
-    // Check if the category exists, otherwise create it
-    let isCategory = await categoryModel.findOne({ name: category });
-    if (!isCategory) {
-        await categoryModel.create({ name: category });
-    }
-
-    // Create the product with the validated data
-    let product = await productModel.create({
-        name,
-        price,
-        category,
-        image,
-        stock,
-        description
-    });
-
-    res.redirect("/admin/dashboard");   
 });
 
 

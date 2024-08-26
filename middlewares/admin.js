@@ -13,5 +13,10 @@ async function validateAdmin(req, res, next) {
         return res.status(401).send("Invalid or Expired Token");
     }
 }
+async function userIsLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) return next();
+    res.redirect("/users/login");
+}
 
-module.exports = validateAdmin;
+module.exports = { validateAdmin, userIsLoggedIn };
+

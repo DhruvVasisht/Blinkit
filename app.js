@@ -6,6 +6,8 @@ const adminRouter = require('./routes/admin');
 const productRouter = require('./routes/products');
 const categoriesRouter = require('./routes/category');
 const userRouter = require('./routes/user');
+const cartRouter =require("./routes/cart");
+const payemntRouter = require('./routes/payment');
 const path = require('path');
 const connectDB=require("./config/mongoose-connection");
 const expressSession = require('express-session');
@@ -34,7 +36,8 @@ app.use("/admin",adminRouter);
 app.use("/products",productRouter);
 app.use("/categories",categoriesRouter);
 app.use("/users",userRouter);
-
+app.use("/cart",cartRouter);
+app.use("/payment",payemntRouter);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

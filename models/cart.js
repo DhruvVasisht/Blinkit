@@ -31,7 +31,7 @@ const validateCart = (cartData) => {
     return schema.validate(cartData);
 };
 
-module.exports ={
+module.exports = {
     cartModel: mongoose.model("cart", cartSchema),
     validateCart,
 };

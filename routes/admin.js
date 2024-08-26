@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { adminModel} = require('../models/admin');
-const validateAdmin = require('../middlewares/admin');
+const {validateAdmin} = require('../middlewares/admin');
 const { productModel } = require('../models/product');
 const { categoryModel } = require('../models/category');
 require("dotenv").config();

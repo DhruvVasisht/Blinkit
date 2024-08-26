@@ -43,9 +43,7 @@ const validateDelivery = (deliveryData) => {
 };
 
 // Create and export Mongoose model
-
-module.exports ={
-    deliveryModel: mongoose.model("delivery", deliverySchema),
+module.exports = {
+    deliveryModel: mongoose.model("Delivery", deliverySchema),
     validateDelivery,
 };
-
