@@ -38,12 +38,10 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         minlength: 6
     },
     phone: {
         type: Number,
-        required: true,
         minlength: 10
     },
     addresses: [AddressSchema]
@@ -54,8 +52,8 @@ const validateUser = (userData) => {
     const schema = Joi.object({
         name: Joi.string().min(3).required(),
         email: Joi.string().email().required().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/), 
-        password: Joi.string().min(6).required().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/), // At least one letter and one number
-        phone: Joi.string().regex(/^[0-9]{10}$/).required(), 
+        password: Joi.string().min(6),
+        phone: Joi.string().regex(/^[0-9]{10}$/), 
         addresses: Joi.array().items(
             Joi.object({
                 state: Joi.string().min(2).max(50).required(),
