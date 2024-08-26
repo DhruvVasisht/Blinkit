@@ -40,7 +40,7 @@
                                 </form>
                             </div>
                             <div class="flex gap-2 mt-4">
-                                <p class="text-gray-500 line-through">₹<%= Number(elem.price) * Number(elem.quantity) + 20 %></p>
+                                <p class="text-gray-500 line-through">₹<%= (Number(elem.price) + 20) * Number(elem.quantity) %></p>
                                 <p>₹<%= Number(elem.price) * Number(elem.quantity) %></p>
                             </div>
                         </div>
@@ -67,19 +67,21 @@
                 <div class="mt-2">
                     <div class="flex justify-between">
                         <p class="text-sm">Items total</p>
-                        <p class="text-sm">₹<%= finalprice - 34 %></p>
+                        <p class="text-sm">₹<%= finalprice %></p>
                     </div>
-                    <div class="flex justify-between">
-                        <p class="text-sm">Delivery charge</p>
-                        <p class="text-sm">₹30</p>
-                    </div>
+                    <% if (finalprice < 199) { %>
+                        <div class="flex justify-between">
+                            <p class="text-sm">Delivery charge</p>
+                            <p class="text-sm">₹30</p>
+                        </div>
+                    <% } %>
                     <div class="flex justify-between">
                         <p class="text-sm">Handling charge</p>
                         <p class="text-sm">₹4</p>
                     </div>
                     <div class="flex justify-between font-bold mt-2">
                         <p class="text-lg">Grand total</p>
-                        <p class="text-lg">₹<%= finalprice %></p>
+                        <p class="text-lg">₹<%= finalprice + (finalprice < 199 ? 30 : 0) + 4 %></p>
                     </div>
                 </div>
             </div>
@@ -90,7 +92,7 @@
                     <img src="https://b.zmtcdn.com/data/fi_assets/9fbf0569f69bfef7d190c5b892ab0a521619355737.png" alt="Feeding India" class="w-12 h-12 rounded">
                     <div class="ml-4">
                         <p class="font-semibold">Feeding India donation</p>
-                        <p class="text-sm opacity-50">Working towards a malnutrition free India. Feeding India...<span class="text-blue-500">read more</span></p>
+                        <p class="text-sm opacity-50">Working towards a malnutrition-free India. Feeding India...<span class="text-blue-500">read more</span></p>
                     </div>
                     <p class="ml-auto text-sm font-bold">₹1</p>
                 </div>
@@ -145,7 +147,7 @@
                         <p class="text-xs text-gray-500">Paytm UPI</p>
                     </div>
                     <div>
-                        <p class="text-lg font-bold">₹<%= finalprice %></p>
+                        <p class="text-lg font-bold">₹<%= finalprice + (finalprice < 199 ? 30 : 0) + 4 %></p>
                         <button class="paybtn bg-green-700 text-white px-4 py-2 rounded">Place Order</button>
                     </div>
                 </div>
