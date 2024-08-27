@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { adminModel} = require('../models/admin');
 const {validateAdmin} = require('../middlewares/admin');
-const { productModel } = require('../models/product');
+const { productModel,validateProduct } = require('../models/product');
 const { categoryModel } = require('../models/category');
 require("dotenv").config();
+const upload = require('../config/multer-config');
 
 if (
     typeof process.env.NODE_ENV !== "undefined" &&
@@ -48,6 +49,9 @@ router.post("/login", async (req, res) => {
 
         let token = jwt.sign({ email: admin.email, admin:true }, process.env.JWT_KEY);
         res.cookie("token", token, { httpOnly: true, secure: false });
+      //  return res.json({
+      //     message:"Login Succesfully"
+      //   })
         return res.redirect("/admin/dashboard");
     } catch (err) {
         return res.status(500).send("Internal Server Error");
@@ -58,6 +62,28 @@ router.get("/dashboard", validateAdmin,async (req, res) => {
  let prodcount= await productModel.countDocuments()
  let categcount= await categoryModel.countDocuments()
  res.render("admin_dashboard",{prodcount,categcount});
+});
+
+router.post('/products', upload.single('image'), validateAdmin, async (req, res) => {
+  try {
+      const { error } = validateProduct(req.body);
+      if (error) return res.status(400).send(error.details[0].message);
+
+      let product = new productModel({
+          name: req.body.name,
+          price: req.body.price,
+          category: req.body.category,
+          description: req.body.description,
+          stock: req.body.stock,
+          image: req.file ? req.file.path : null // Assuming 'path' gives the path to the uploaded file
+      });
+
+      await product.save();
+      // res.json(product)
+      res.redirect('/admin/products'); // Redirect to the admin products page after creating the product
+  } catch (err) {
+      res.status(500).send("Error creating product: " + err.message);
+  }
 });
 
 router.get("/products", validateAdmin, async (req, res) => {
