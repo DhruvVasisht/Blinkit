@@ -3,6 +3,7 @@ const router = express.Router();
 const { cartModel } = require('../models/cart');
 const { productModel } = require('../models/product');
 const { userIsLoggedIn } = require('../middlewares/admin');
+const upload = require('../config/multer-config');
 
 // Get Cart
 router.get("/", userIsLoggedIn, async (req, res) => {
