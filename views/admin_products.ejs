@@ -27,40 +27,36 @@
                     <!-- Product List by Category -->
                     <% for(let key in products){ %>
                         <div class="bg-white shadow rounded-lg mb-6 p-6">
-                            <h2 class="text-2xl font-semibold text-gray-800">
-                                <%= key %>
-                            </h2>
-                            <% products[key].forEach(function(elem){ %>
+                            <% for (let key in products) { %>
+                              <h2 class="text-2xl font-semibold text-gray-800"><%= key %></h2>
+                              
+                              <% products[key].forEach(function(elem){ %>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                                    <div class="bg-gray-50 p-4 rounded-lg shadow">
-                                        <img class="w-27 h-32 mb-3" src="data:image/png;base64,<%= elem.image %>" alt="">
-
-                                        <h3 class="text-lg font-medium text-gray-900">
-                                            <%= elem.name %>
-                                        </h3>
-                                        <p class="mt-2 text-gray-600">Price: <%= elem.price %>
-                                        </p>
-                                        <p class="mt-2 text-gray-600">Stock: <%= elem.stock %>
-                                        </p>
-                                        <p class="mt-2 text-gray-600">
-                                            <%= elem.description %>
-                                        </p>
-                                        <p class="mt-2 text-sm text-gray-500">Product ID: <%= elem._id %>
-                                        </p>
-                                        <div class="mt-5 flex gap-4">
-                                            <a href="/products/delete/<%= elem._id %>"
-                                                class="capitalize inline-block text-red-600">delete</a>
-                                            <a href="" class="capitalize inline-block text-blue-600">update</a>
-                                        </div>
+                                  <div class="bg-gray-50 p-4 rounded-lg shadow">
+                                    <!-- Render the image with Base64 encoding -->
+                                    <img class="w-27 h-32 mb-3" src="data:image/png;base64,<%= elem.image %>" alt="Product Image">
+                          
+                                    <h3 class="text-lg font-medium text-gray-900"><%= elem.name %></h3>
+                                    <p class="mt-2 text-gray-600">Price: <%= elem.price %></p>
+                                    <p class="mt-2 text-gray-600">Stock: <%= elem.stock %></p>
+                                    <p class="mt-2 text-gray-600"><%= elem.description %></p>
+                                    <p class="mt-2 text-sm text-gray-500">Product ID: <%= elem._id %></p>
+                                    
+                                    <div class="mt-5 flex gap-4">
+                                      <a href="/products/delete/<%= elem._id %>" class="capitalize inline-block text-red-600">delete</a>
+                                      <a href="/products/update/<%= elem._id %>" class="capitalize inline-block text-blue-600">update</a>
                                     </div>
+                                  </div>
                                 </div>
-                                <% }) %>
-                                    <div class="mt-4 text-center">
-                                        <a href="/admin/products?category=&page=2"
-                                            class="text-indigo-600 hover:text-indigo-800">See
-                                            More</a>
-                                    </div>
-                        </div>
+                              <% }) %>
+                          
+                              <!-- Optional: See more link -->
+                              <div class="mt-4 text-center">
+                                <a href="/admin/products?category=<%= key %>&page=2" class="text-indigo-600 hover:text-indigo-800">See More</a>
+                              </div>
+                            <% } %>
+                          </div>
+                          
                         <% } %>
 
                 </div>

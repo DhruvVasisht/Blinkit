@@ -75,11 +75,15 @@ router.post('/products', upload.single('image'), validateAdmin, async (req, res)
           category: req.body.category,
           description: req.body.description,
           stock: req.body.stock,
-          image: req.file ? req.file.path : null // Assuming 'path' gives the path to the uploaded file
+          image: req.file.buffer// Assuming 'path' gives the path to the uploaded file
       });
+      // console.log(product)
+      // console.log(req.file)
+      // console.log(req.file.path)
 
-      await product.save();
+      const test = await product.save();
       // res.json(product)
+      // res.json(test)
       res.redirect('/admin/products'); // Redirect to the admin products page after creating the product
   } catch (err) {
       res.status(500).send("Error creating product: " + err.message);
@@ -87,38 +91,46 @@ router.post('/products', upload.single('image'), validateAdmin, async (req, res)
 });
 
 router.get("/products", validateAdmin, async (req, res) => {
-    try {
-      const resultArray = await productModel.aggregate([
-        {
-          $group: {
-            _id: "$category",
-            products: { $push: "$$ROOT" }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            category: "$_id",
-            products: { $slice: ["$products", 10] }
-          }
+  try {
+    const resultArray = await productModel.aggregate([
+      {
+        $group: {
+          _id: "$category",
+          products: { $push: "$$ROOT" }
         }
-      ]);
-      
-      // Convert the array into an object
-      const resultObject = resultArray.reduce((acc, item) => {
-        acc[item.category] = item.products;
-        return acc;
-      }, {});
+      },
+      {
+        $project: {
+          _id: 0,
+          category: "$_id",
+          products: { $slice: ["$products", 10] } // Limit products to 10 per category
+        }
+      }
+    ]);
+
+    // Convert image buffer to Base64 and transform resultArray into an object
+    const resultObject = resultArray.reduce((acc, item) => {
+      // Convert each product's image buffer to Base64
+      const productsWithBase64Images = item.products.map(product => {
+        return {
+          ...product,
+          image: product.image ? product.image.toString('base64') : '' // Convert Buffer to Base64
+        };
+      });
+
+      acc[item.category] = productsWithBase64Images;
+      return acc;
+    }, {});
+
+    // Render the view and pass the resultObject
+    res.render("admin_products", { products: resultObject });
   
-      // Render the view and pass the resultObject
-      res.render("admin_products", { products: resultObject });
-  
-    } catch (error) {
-      // Handle errors appropriately
-      console.error("Error fetching products:", error);
-      res.status(500).send("Server Error");
-    }
-  });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
   
 
 router.get("/logout", (req, res) => {
