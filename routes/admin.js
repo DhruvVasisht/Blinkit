@@ -39,23 +39,30 @@ router.get("/login", (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    let { email, password } = req.body;
-    try {
-        let admin = await adminModel.findOne({ email });
-        if (!admin) return res.status(404).send("This Admin does not exist");
+  let { email, password } = req.body;
+  try {
+      let admin = await adminModel.findOne({ email });
+      if (!admin) return res.status(404).send("This Admin does not exist");
 
-        let valid = await bcrypt.compare(password, admin.password);
-        if (!valid) return res.status(400).send("Invalid credentials");
+      let valid = await bcrypt.compare(password, admin.password);
+      if (!valid) return res.status(400).send("Invalid credentials");
 
+
+       if(valid && admin){
         let token = jwt.sign({ email: admin.email, admin:true }, process.env.JWT_KEY);
         res.cookie("token", token, { httpOnly: true, secure: false });
-      //  return res.json({
-      //     message:"Login Succesfully"
-      //   })
         return res.redirect("/admin/dashboard");
-    } catch (err) {
-        return res.status(500).send(err);
-    }
+       }
+       else{
+        return res.redirect("/")
+       }
+    //  return res.json({
+    //     message:"Login Succesfully"
+    //   })
+
+  } catch (err) {
+      return res.status(500).send("Internal Server Error");
+  }
 });
 
 router.get("/dashboard", validateAdmin,async (req, res) => {
