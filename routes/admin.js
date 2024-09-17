@@ -40,27 +40,40 @@ router.get("/login", (req, res) => {
 
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
+
   try {
+      // Find the admin by email
       let admin = await adminModel.findOne({ email });
-      if (!admin) return res.status(404).send("This Admin does not exist");
+      if (!admin) {
+          return res.status(404).send("This Admin does not exist");
+      }
 
+      // Compare the provided password with the stored hashed password
       let valid = await bcrypt.compare(password, admin.password);
-      if (!valid) return res.status(400).send("Invalid credentials");
+      if (!valid) {
+          return res.status(400).send("Invalid credentials");
+      }
 
+      // If valid, generate a JWT token and set it in a cookie
+      if (valid && admin) {
+          const jwtKey = process.env.JWT_KEY;
+          if (!jwtKey) {
+              console.error("JWT_KEY is missing in environment variables");
+              return res.status(500).send("Internal Server Error: Missing JWT_KEY");
+          }
 
-       if(valid && admin){
-        let token = jwt.sign({ email: admin.email, admin:true }, process.env.JWT_KEY);
-        res.cookie("token", token, { httpOnly: true, secure: false });
-        return res.redirect("/admin/dashboard");
-       }
-       else{
-        return res.redirect("/")
-       }
-    //  return res.json({
-    //     message:"Login Succesfully"
-    //   })
+          let token = jwt.sign({ email: admin.email, admin: true }, jwtKey);
+          res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
+
+          // Redirect to the admin dashboard
+          return res.redirect("/admin/dashboard");
+      } else {
+          // Fallback redirect
+          return res.redirect("/");
+      }
 
   } catch (err) {
+      console.error("Error during login:", err); // Log the error for debugging
       return res.status(500).send("Internal Server Error");
   }
 });
