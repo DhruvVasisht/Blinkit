@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
       //   })
         return res.redirect("/admin/dashboard");
     } catch (err) {
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send(err);
     }
 });
 
