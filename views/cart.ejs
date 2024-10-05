@@ -24,8 +24,6 @@
                 
                 <% cart.forEach(elem => { %>
                     <div class="flex items-center mt-4">
-                        <img src="data:image/<%= elem.imageType %>;base64,<%= elem.image %>" 
-                             alt="<%= elem.name %>" class="w-16 h-16 rounded">
                         <div class="ml-4">
                             <p><%= elem.name %></p>
                             <p class="text-xs text-gray-500">170 g</p>
