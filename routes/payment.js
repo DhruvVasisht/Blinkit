@@ -15,7 +15,7 @@ router.post('/place-order', async (req, res) => {
             products: products,
             totalPrice: totalPrice,
             address: address,
-            status: 'Pending', // Default status
+            status: 'Pending', 
             delivery: deliveryId, // Delivery details
             payment: null // Will be updated after payment creation
         };

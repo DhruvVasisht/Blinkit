@@ -9,7 +9,7 @@ const { validateAdmin, userIsLoggedIn } = require('../middlewares/admin');
 router.get("/", userIsLoggedIn, async (req, res) => {
     let somethingInCart = false;
     try {
-        // Fetch grouped products by category
+        
         const resultArray = await productModel.aggregate([
             {
                 $group: {
@@ -26,31 +26,30 @@ router.get("/", userIsLoggedIn, async (req, res) => {
             }
         ]);
 
-        // Check if the user has something in the cart
+    
         let cart = await cartModel.findOne({ user: req.session.passport.user }).populate("products");
         if (cart && cart.products && cart.products.length > 0) somethingInCart = true;
 
-        // Fetch 4 random products for 'Order Now' section
+        
         let rnproducts = await productModel.aggregate([{ $sample: { size: 4 } }]);
 
-        // Map the rnproducts and resultArray to include base64 encoded image
+      
         rnproducts = rnproducts.map(product => ({
             ...product,
-            image: product.image ? product.image.toString('base64') : '', // Convert Buffer to Base64 string
-            imageType: 'image/jpeg' // Adjust this based on the actual image type
+            image: product.image ? product.image.toString('base64') : '', 
         }));
 
-        // Grouped products (by category) including base64 images
+       
         const resultObject = resultArray.reduce((acc, item) => {
             acc[item.category] = item.products.map(product => ({
                 ...product,
-                image: product.image ? product.image.toString('base64') : '', // Convert Buffer to Base64 string
-                imageType: 'image/jpeg' // Adjust this based on the actual image type
+                image: product.image ? product.image.toString('base64') : '' , 
+        
             }));
             return acc;
         }, {});
 
-        // Render the homepage with products and cart information
+       
         res.render("index", { 
             products: resultObject, 
             rnproducts, 
@@ -58,7 +57,7 @@ router.get("/", userIsLoggedIn, async (req, res) => {
             cartCount: cart ? cart.products.length : 0 
         });
     } catch (error) {
-        // Handle any errors
+      
         res.status(500).send("Error fetching products: " + error.message);
     }
 });
